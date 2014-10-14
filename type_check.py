@@ -4,7 +4,6 @@ from functools import wraps
 def type_check(*type_args,**type_kwargs):
     def dec(func):
         types_args = inspect.getcallargs(type_check,*type_args,**type_kwargs)
-        print types_args
 
         @wraps(func)
         def new_func(*args,**kwargs):
@@ -15,12 +14,12 @@ def type_check(*type_args,**type_kwargs):
             for k in val_args['kwargs']:
                 if not isinstance(val_args['kwargs'][k], types_args['type_kwargs'][k]):
                     raise Exception("Type not match: {0} is not type {1}".format(val_args['kwargs'][k], types_args['type_kwargs'][k]))
-            func(*args,**kwargs)
+            return func(*args,**kwargs)
         return new_func
     return dec
 
 @type_check(int,float,x=list,y=tuple)
 def f(a,b,x=[1,2],y=(3,)):
-    pass
+    return sum([a,b,x[0],y[0]])
 
-f(1,2.0,x=3,y=(4,))
+print f(1,2.0,x=[3],y=(4,))
