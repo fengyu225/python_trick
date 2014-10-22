@@ -1,3 +1,5 @@
+import sys
+
 class Node(object):
     # Trie node
     def __init__(self,c=""):
@@ -16,20 +18,40 @@ class Trie(object):
             if c not in curr_node.children:
                 curr_node.children[c] = Node(c)
             curr_node = curr_node.children[c]
+        curr_node.children["$"] = Node("$")
 
-import pdb
+
+def is_balanced(s):
+    stack = []
+    for c in s:
+        if c=='(':
+            stack.append(c)
+        elif c==')':
+            if stack == []:
+                return False
+            stack.pop()
+    return stack==[]
+
+
 def get_longest_common_suffix(l):
     if len(l) == 0:
         return 0
     if len(l) == 1:
         return len(l[0])
     i = 1
-    while True:
+    while i<=len(l[0]):
+        flag = False
         c = l[0][-1*i]
         for lx in l[1:]:
             if len(lx)<i or lx[-1*i] != c:
-                return i-1
+                flag = True
+                break 
+        if flag:
+            break
         i+=1
+    while l[0][-1*(i-1)] == ")":
+        i-=1
+    return 0 if i-1>0 and not is_balanced(l[0][-1*(i-1):len(l[0])]) else i-1
 
 
 def build(root):
@@ -42,7 +64,7 @@ def build(root):
     if len(regs) == 1:
         return "{0}{1}".format(root.char, "|".join(regs))
     common_suffix_len = get_longest_common_suffix(regs)
-    suffix = regs[0][-1*common_suffix_len:len(regs[0])]
+    suffix = regs[0][-1*common_suffix_len:len(regs[0])] if common_suffix_len>0 else ""
     regs = [s[0:len(s)-common_suffix_len] for s in regs]
     return "{0}(?:{1}){2}".format(root.char, "|".join(regs), suffix)
 
@@ -55,30 +77,9 @@ def generate_regex(l):
 
 
 if __name__ == "__main__":
-    l = [
-            "app1.tmol.ash1.websys.tmcs",
-            "app1.tmol.euash1.websys.tmcs",
-            "app2.tmol.ash1.websys.tmcs",
-            "apt1.tmol.phx1.websys.tmcs",
-            "app1.tmol.phx1.websys.tmcs"
-        ]
-#    l = [
-#            "apt18.tmol.ash1.websys.tmcs",
-#            "apt19.tmol.ash1.websys.tmcs",
-#            "apt20.tmol.ash1.websys.tmcs",
-#            "apt21.tmol.ash1.websys.tmcs",
-#            "apt22.tmol.ash1.websys.tmcs",
-#            "apt23.tmol.ash1.websys.tmcs",
-#            "apt24.tmol.ash1.websys.tmcs",
-#            "apt25.tmol.ash1.websys.tmcs",
-#            "apt26.tmol.ash1.websys.tmcs",
-#            "apt27.tmol.ash1.websys.tmcs",
-#            "apt28.tmol.ash1.websys.tmcs",
-#            "apt29.tmol.ash1.websys.tmcs",
-#            "apt30.tmol.ash1.websys.tmcs",
-#            "apt31.tmol.ash1.websys.tmcs",
-#            "apt32.tmol.ash1.websys.tmcs",
-#            "apt33.tmol.ash1.websys.tmcs",
-#            "apt34.tmol.ash1.websys.tmcs"
-#        ]
+    if len(sys.argv)<2:
+        print "pass file path as first var"
+    l = []
+    with open(sys.argv[1], "r") as f:
+        l = [h.strip() for h in f]
     print generate_regex(l)
