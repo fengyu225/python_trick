@@ -79,6 +79,7 @@ def generate_regex(l):
 if __name__ == "__main__":
     if len(sys.argv)<2:
         print "pass file path as first var"
+        sys.exit(1)
     l = []
     with open(sys.argv[1], "r") as f:
         l = [h.strip() for h in f]
