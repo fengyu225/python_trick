@@ -60,6 +60,7 @@ p_0 = re.compile("\d+")
 
 def build(root):
     # post order traversal building regex
+    # TODO: when a string is too long (more than 1000 chars), the recursive way of post order traversal will not work because max # of stack reached. Need to rewrite the post order traversal in iterative fashion
     regs = [build(root.children[child]) for child in root.children]
 #    if root.char == '.':
 #        root.char = "\."
@@ -71,7 +72,7 @@ def build(root):
     suffix = regs[0][-1*common_suffix_len:len(regs[0])] if common_suffix_len>0 else ""
     regs = [s[0:len(s)-common_suffix_len] for s in regs]
     if reduce(lambda x,y:x and y, map(lambda x:len(x)==1, regs)):
-        return "{0}[{1}]{2}".format(root.char, "".join(regs), suffix)
+        return "{0}[{1}]{2}".format(root.char, "".join(sorted(regs)), suffix)
     else:
         return "{0}(?:{1}){2}".format(root.char, "|".join(regs), suffix)
 
