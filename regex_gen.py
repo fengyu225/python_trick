@@ -25,10 +25,14 @@ class Trie(object):
 def is_balanced(s):
     stack = []
     for c in s:
-        if c=='(':
+        if c=='(' or c=='[':
             stack.append(c)
         elif c==')':
-            if stack == []:
+            if stack == [] or stack[-1] == ']':
+                return False
+            stack.pop()
+        elif c==']':
+            if stack == [] or stack[-1] ==')':
                 return False
             stack.pop()
     return stack==[]
@@ -50,7 +54,7 @@ def get_longest_common_suffix(l):
         if flag:
             break
         i+=1
-    while l[0][-1*(i-1)] == ")":
+    while l[0][-1*(i-1)] == ")" or l[0][-1*(i-1)] == ']':
         i-=1
     return 0 if i-1>0 and not is_balanced(l[0][-1*(i-1):len(l[0])]) else i-1
 
@@ -71,10 +75,12 @@ def build(root):
     common_suffix_len = get_longest_common_suffix(regs)
     suffix = regs[0][-1*common_suffix_len:len(regs[0])] if common_suffix_len>0 else ""
     regs = [s[0:len(s)-common_suffix_len] for s in regs]
+    print regs
     if reduce(lambda x,y:x and y, map(lambda x:len(x)==1, regs)):
         return "{0}[{1}]{2}".format(root.char, "".join(sorted(regs)), suffix)
     else:
         return "{0}(?:{1}){2}".format(root.char, "|".join(regs), suffix)
+#    return "{0}(?:{1}){2}".format(root.char, "|".join(regs), suffix)
 
 
 def generate_regex(l):
