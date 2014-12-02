@@ -75,7 +75,7 @@ def build(root):
     common_suffix_len = get_longest_common_suffix(regs)
     suffix = regs[0][-1*common_suffix_len:len(regs[0])] if common_suffix_len>0 else ""
     regs = [s[0:len(s)-common_suffix_len] for s in regs]
-    print regs
+#    print regs
     if reduce(lambda x,y:x and y, map(lambda x:len(x)==1, regs)):
         return "{0}[{1}]{2}".format(root.char, "".join(sorted(regs)), suffix)
     else:
